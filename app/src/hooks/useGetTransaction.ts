@@ -6,6 +6,7 @@ const useGetTransaction = () => {
   const [data, setData] = useState<MainType.TransactionType[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [refetch, setRefetch] = useState(false);
 
   useEffect(() => {
     const fetchDataForPosts = async () => {
@@ -22,13 +23,18 @@ const useGetTransaction = () => {
         setData(null);
       } finally {
         setLoading(false);
+        setRefetch(false);
       }
     };
 
     fetchDataForPosts();
-  }, []);
+  }, [refetch]);
 
-  return { data, loading, error };
+  const onRefresh = () => {
+    setRefetch(true);
+  };
+
+  return { data, loading, error, onRefresh };
 };
 
 export default useGetTransaction;

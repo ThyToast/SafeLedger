@@ -1,6 +1,7 @@
 import {
   FlatList,
   ListRenderItem,
+  RefreshControl,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -16,10 +17,19 @@ import * as LocalAuthentication from "expo-local-authentication";
 type NavProps = NativeStackScreenProps<RootStackParamList, "Transaction">;
 
 const TransactionScreen = ({ navigation }: NavProps) => {
-  const { data } = useGetTransaction();
+  const { data, loading, onRefresh } = useGetTransaction();
   const totalAmountSpent = data
     ? data?.reduce((sum, data) => sum + data.amount, 0)
     : 0;
+
+  const refreshControl = (
+    <RefreshControl
+      refreshing={loading}
+      onRefresh={onRefresh}
+      progressBackgroundColor={"white"}
+      tintColor={"white"}
+    />
+  );
 
   const renderItem: ListRenderItem<MainType.TransactionType> = ({
     item,
@@ -51,34 +61,25 @@ const TransactionScreen = ({ navigation }: NavProps) => {
     );
   };
 
+  const renderHeader = () => {
+    return (
+      <View style={styles.headerContainer}>
+        <View style={styles.bar} />
+        <Text
+          style={styles.amountSpent}
+        >{`Total amount spent: $${totalAmountSpent}`}</Text>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <FlatList
-        style={{ paddingHorizontal: 24 }}
+        style={styles.list}
         data={data}
         renderItem={renderItem}
-        ListHeaderComponent={
-          <View
-            style={{
-              backgroundColor: "#EEEDE7",
-              alignSelf: "center",
-              borderRadius: 16,
-              marginVertical: 16,
-            }}
-          >
-            <View
-              style={{
-                marginTop: 10,
-                flexDirection: "row",
-                backgroundColor: "black",
-                height: 20,
-              }}
-            />
-            <Text
-              style={styles.amountSpent}
-            >{`Total amount spent: $${totalAmountSpent}`}</Text>
-          </View>
-        }
+        ListHeaderComponent={renderHeader}
+        refreshControl={refreshControl}
       />
     </View>
   );
@@ -121,5 +122,18 @@ const styles = StyleSheet.create({
     fontSize: 20,
     padding: 16,
     fontWeight: "bold",
+  },
+  list: { paddingHorizontal: 24 },
+  headerContainer: {
+    backgroundColor: "#EEEDE7",
+    alignSelf: "center",
+    borderRadius: 16,
+    marginVertical: 16,
+  },
+  bar: {
+    marginTop: 10,
+    flexDirection: "row",
+    backgroundColor: "black",
+    height: 20,
   },
 });
