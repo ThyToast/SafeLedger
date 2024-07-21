@@ -51,7 +51,7 @@ const TransactionScreen = ({ navigation }: NavProps) => {
     return (
       <TouchableOpacity key={index} style={styles.item} onPress={onPress}>
         <View style={styles.icon}>
-          <FontAwesome5 name="money-bill" size={24} color="black" />
+          <FontAwesome5 name={"money-bill"} size={24} color={"black"} />
         </View>
         <View>
           <Text style={styles.title}>{item.description}</Text>

@@ -22,7 +22,9 @@ const Login = ({ navigation }: NavProps) => {
 
   const authenticate = async () => {
     const message = "Please set authentication method on your device";
-    const hasHardwareAuth = await LocalAuthentication.hasHardwareAsync();
+    const hasHardwareAuth =
+      (await LocalAuthentication.hasHardwareAsync()) &&
+      (await LocalAuthentication.isEnrolledAsync());
 
     if (hasHardwareAuth === false) {
       if (Platform.OS === "android") {
@@ -36,6 +38,7 @@ const Login = ({ navigation }: NavProps) => {
       const result = await LocalAuthentication.authenticateAsync();
       if (result.success) {
         dispatch(loginSlice.actions.logIn());
+        navigation.navigate("Transaction");
       }
     } else {
       navigation.navigate("Transaction");
