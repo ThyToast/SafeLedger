@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { getTransaction } from "../api/transactionApi";
+import { MainType } from "../../typings";
 
 const useGetTransaction = () => {
-  const [data, setData] = useState<Object[] | null>(null);
+  const [data, setData] = useState<MainType.TransactionType[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -13,7 +14,7 @@ const useGetTransaction = () => {
         if (!response.ok) {
           throw new Error(`HTTP error: Status ${response.status}`);
         }
-        let postsData: Object[] = await response.json();
+        let postsData: MainType.TransactionType[] = await response.json();
         setData(postsData);
         setError(null);
       } catch (err: any) {

@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import * as LocalAuthentication from "expo-local-authentication";
 import { useAppDispatch, useAppSelector } from "../src/hooks/useRedux";

@@ -4,14 +4,24 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import TransactionScreen from "../../views/TransactionScreen";
 import TransactionDetail from "../../views/TransactionDetail";
 import Login from "../../views/Login";
-import { SafeAreaView } from "react-native";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const NavigationStack = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator
+        initialRouteName="Login"
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: "#D6AD60",
+          },
+          headerTintColor: "#fff",
+          headerTitleStyle: {
+            fontWeight: "bold",
+          },
+        }}
+      >
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Transaction" component={TransactionScreen} />
         <Stack.Screen
