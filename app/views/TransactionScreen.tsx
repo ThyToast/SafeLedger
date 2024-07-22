@@ -1,4 +1,5 @@
 import {
+  Button,
   FlatList,
   ListRenderItem,
   RefreshControl,
@@ -8,16 +9,17 @@ import {
   View,
 } from "react-native";
 import React from "react";
-import useGetTransaction from "../src/hooks/useGetTransaction";
-import { MainType } from "../typings";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as LocalAuthentication from "expo-local-authentication";
+import { MAIN_COLORS } from "../constants/colors";
+import { MainType } from "../typings";
+import useGetTransaction from "../src/hooks/useGetTransaction";
 
 type NavProps = NativeStackScreenProps<RootStackParamList, "Transaction">;
 
 const TransactionScreen = ({ navigation }: NavProps) => {
-  const { data, loading, onRefresh } = useGetTransaction();
+  const { data, loading, onRefresh, error } = useGetTransaction();
   const totalAmountSpent = data
     ? data?.reduce((sum, data) => sum + data.amount, 0)
     : 0;
@@ -72,15 +74,29 @@ const TransactionScreen = ({ navigation }: NavProps) => {
     );
   };
 
+  const renderError = () => {
+    return (
+      <View style={styles.errorContainer}>
+        <FontAwesome5 name="skull" size={24} color="white" />
+        <Text style={styles.errorText}>Oops, something went wrong</Text>
+        <Button title="Retry" onPress={onRefresh}></Button>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
-      <FlatList
-        style={styles.list}
-        data={data}
-        renderItem={renderItem}
-        ListHeaderComponent={renderHeader}
-        refreshControl={refreshControl}
-      />
+      {!error ? (
+        <FlatList
+          style={styles.list}
+          data={data}
+          renderItem={renderItem}
+          ListHeaderComponent={renderHeader}
+          refreshControl={refreshControl}
+        />
+      ) : (
+        renderError()
+      )}
     </View>
   );
 };
@@ -89,8 +105,13 @@ export default TransactionScreen;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#0A1045",
+    backgroundColor: MAIN_COLORS.BACKGROUND_COLOR,
+    justifyContent: "center",
     height: "100%",
+  },
+  errorContainer: { alignItems: "center", rowGap: 16 },
+  errorText: {
+    color: "white",
   },
   title: {
     fontWeight: "bold",

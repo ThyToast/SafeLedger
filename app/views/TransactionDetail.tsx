@@ -1,7 +1,8 @@
-import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import moment from "moment";
+import { StyleSheet, Text, View } from "react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { MAIN_COLORS } from "../constants/colors";
 
 type NavProps = NativeStackScreenProps<
   RootStackParamList,
@@ -41,7 +42,7 @@ export default TransactionDetail;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#0A1045",
+    backgroundColor: MAIN_COLORS.BACKGROUND_COLOR,
     height: "100%",
   },
   information: {

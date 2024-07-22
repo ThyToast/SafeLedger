@@ -13,6 +13,7 @@ import * as LocalAuthentication from "expo-local-authentication";
 import { useAppDispatch, useAppSelector } from "../src/hooks/useRedux";
 import { loginSlice } from "../redux/appSlice";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { MAIN_COLORS } from "../constants/colors";
 
 type NavProps = NativeStackScreenProps<RootStackParamList, "Login">;
 
@@ -68,7 +69,7 @@ export default Login;
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    backgroundColor: "#0A1045",
+    backgroundColor: MAIN_COLORS.BACKGROUND_COLOR,
     height: "100%",
     justifyContent: "center",
   },

@@ -5,7 +5,7 @@ import { MainType } from "../../typings";
 const useGetTransaction = () => {
   const [data, setData] = useState<MainType.TransactionType[] | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<boolean | null>(null);
   const [refetch, setRefetch] = useState(false);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ const useGetTransaction = () => {
         setData(postsData);
         setError(null);
       } catch (err: any) {
-        setError(err.message);
+        setError(true);
         setData(null);
       } finally {
         setLoading(false);
