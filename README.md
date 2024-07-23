@@ -23,3 +23,23 @@ For iOS: scan the generated QR with your phone camera
 For Android: scan the generated QR with the inbuilt expo go app camera
 
 For Android Studio users: open `android` folder using Android Studio and hit run
+
+# Demo
+Android:
+(if user has no device authentication set up)
+
+https://github.com/user-attachments/assets/4b49af8a-592a-4507-9f3a-731997ced77c
+
+(if user has device authentication)
+
+https://github.com/user-attachments/assets/5aca920c-4a13-498c-868a-26eccc5717d6
+
+iOS:
+
+https://github.com/user-attachments/assets/734afa85-4613-46ad-b9c9-c5971516063a
+
+(FaceId does not work on Expo Go)
+
+
+
+
