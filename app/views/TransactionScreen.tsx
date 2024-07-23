@@ -93,7 +93,7 @@ const TransactionScreen = ({ navigation }: NavProps) => {
           >{`Total amount spent: $${totalSpentText}`}</Text>
           <TouchableOpacity style={styles.revealIcon} onPress={onPressReveal}>
             <FontAwesome5
-              name={isReveal ? "eye-slash" : "eye"}
+              name={isReveal ? "eye" : "eye-slash"}
               size={24}
               color="black"
             />
