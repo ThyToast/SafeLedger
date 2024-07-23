@@ -8,21 +8,26 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import * as LocalAuthentication from "expo-local-authentication";
 import { MAIN_COLORS } from "../constants/colors";
 import { MainType } from "../typings";
 import useGetTransaction from "../src/hooks/useGetTransaction";
+import useBiometricAuthentication from "../src/hooks/useBiometricAuthentication";
 
 type NavProps = NativeStackScreenProps<RootStackParamList, "Transaction">;
 
 const TransactionScreen = ({ navigation }: NavProps) => {
   const { data, loading, onRefresh, error } = useGetTransaction();
-  const totalAmountSpent = data
+  const [isReveal, setIsReveal] = useState(false);
+  const { authenticate } = useBiometricAuthentication({});
+
+  const totalSpent = data
     ? data?.reduce((sum, data) => sum + data.amount, 0)
     : 0;
+
+  const totalSpentCensored = totalSpent.toString().replace(/./gi, "*");
 
   const refreshControl = (
     <RefreshControl
@@ -38,16 +43,17 @@ const TransactionScreen = ({ navigation }: NavProps) => {
     index,
   }) => {
     const onPress = async () => {
-      const result = await LocalAuthentication.authenticateAsync();
-      if (result.success) {
-        navigation.navigate("TransactionDetails", {
-          date: item.date,
-          amount: item.amount,
-          description: item.description,
-          type: item.type,
-          transaction_id: item.transaction_id,
-        });
-      }
+      authenticate().then((isSuccess) => {
+        if (isSuccess) {
+          navigation.navigate("TransactionDetails", {
+            date: item.date,
+            amount: item.amount,
+            description: item.description,
+            type: item.type,
+            transaction_id: item.transaction_id,
+          });
+        }
+      });
     };
 
     return (
@@ -63,13 +69,36 @@ const TransactionScreen = ({ navigation }: NavProps) => {
     );
   };
 
+  const onPressReveal = async () => {
+    if (isReveal) {
+      setIsReveal(!isReveal);
+      return;
+    }
+
+    authenticate().then((isSuccess) => {
+      if (isSuccess) {
+        setIsReveal(!isReveal);
+      }
+    });
+  };
+
   const renderHeader = () => {
+    const totalSpentText = isReveal ? totalSpent : totalSpentCensored;
     return (
       <View style={styles.headerContainer}>
         <View style={styles.bar} />
-        <Text
-          style={styles.amountSpent}
-        >{`Total amount spent: $${totalAmountSpent}`}</Text>
+        <View style={styles.headerInnerContainer}>
+          <Text
+            style={styles.amountSpent}
+          >{`Total amount spent: $${totalSpentText}`}</Text>
+          <TouchableOpacity style={styles.revealIcon} onPress={onPressReveal}>
+            <FontAwesome5
+              name={isReveal ? "eye-slash" : "eye"}
+              size={24}
+              color="black"
+            />
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
@@ -139,6 +168,7 @@ const styles = StyleSheet.create({
     borderRadius: 32,
     justifyContent: "center",
   },
+  revealIcon: { marginEnd: 16 },
   amountSpent: {
     fontSize: 20,
     padding: 16,
@@ -151,6 +181,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginVertical: 16,
   },
+  headerInnerContainer: { flexDirection: "row", alignItems: "center" },
   bar: {
     marginTop: 10,
     flexDirection: "row",

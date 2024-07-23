@@ -1,48 +1,43 @@
-import {
-  Alert,
-  Platform,
-  StyleSheet,
-  Text,
-  ToastAndroid,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Text } from "@rneui/themed";
 import React from "react";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import * as LocalAuthentication from "expo-local-authentication";
-import { useAppDispatch, useAppSelector } from "../src/hooks/useRedux";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useAppDispatch } from "../src/hooks/useRedux";
 import { loginSlice } from "../redux/appSlice";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { MAIN_COLORS } from "../constants/colors";
+import useBiometricAuthentication from "../src/hooks/useBiometricAuthentication";
 
 type NavProps = NativeStackScreenProps<RootStackParamList, "Login">;
 
 const Login = ({ navigation }: NavProps) => {
-  const isAuthenticated = useAppSelector((state) => state.login.loggedIn);
   const dispatch = useAppDispatch();
+  const isAndroid = Platform.OS === "android";
 
-  const authenticate = async () => {
-    const message = "Please set authentication method on your device";
-    const hasHardwareAuth =
-      (await LocalAuthentication.hasHardwareAsync()) &&
-      (await LocalAuthentication.isEnrolledAsync());
+  const onSuccess = () => {
+    dispatch(loginSlice.actions.logIn());
+    navigation.navigate("Transaction");
+  };
 
-    if (hasHardwareAuth === false) {
-      if (Platform.OS === "android") {
-        ToastAndroid.show(message, ToastAndroid.SHORT);
-      } else {
-        Alert.alert(message);
-      }
+  const onUserAuthenticated = () => navigation.navigate("Transaction");
+
+  const { authenticateFirstTime, isAuthenticated } = useBiometricAuthentication(
+    {
+      onSuccess,
+      onUserAuthenticated,
     }
+  );
 
-    if (!isAuthenticated) {
-      const result = await LocalAuthentication.authenticateAsync();
-      if (result.success) {
-        dispatch(loginSlice.actions.logIn());
-        navigation.navigate("Transaction");
-      }
+  const renderIcon = () => {
+    const iconProps = { size: 64, color: "white" };
+
+    if (isAuthenticated) {
+      return <FontAwesome5 name="arrow-circle-right" {...iconProps} />;
+    } else if (isAndroid) {
+      return <FontAwesome5 name="fingerprint" {...iconProps} />;
     } else {
-      navigation.navigate("Transaction");
+      return <MaterialCommunityIcons name="face-recognition" {...iconProps} />;
     }
   };
 
@@ -53,12 +48,8 @@ const Login = ({ navigation }: NavProps) => {
           ? "Welcome, authenticated user"
           : "Welcome, please authenticate to enter"}
       </Text>
-      <TouchableOpacity hitSlop={16} onPress={authenticate}>
-        <FontAwesome5
-          name={isAuthenticated ? "arrow-circle-right" : "fingerprint"}
-          size={64}
-          color="white"
-        />
+      <TouchableOpacity hitSlop={16} onPress={authenticateFirstTime}>
+        {renderIcon()}
       </TouchableOpacity>
     </View>
   );
