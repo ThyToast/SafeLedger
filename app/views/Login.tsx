@@ -1,5 +1,4 @@
-import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
-import { Text } from "@rneui/themed";
+import { Platform, StyleSheet, TouchableOpacity, View, Text } from "react-native";
 import React from "react";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
